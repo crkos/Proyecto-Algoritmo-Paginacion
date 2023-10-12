@@ -15,6 +15,7 @@ export class Process {
   burstTime;
   time;
   priority;
+  size; // Nuevo atributo para el tamaño del proceso en la memoria
   color;
   waitingTime;
   arrivalTime;
@@ -23,21 +24,31 @@ export class Process {
   turnaroundTime;
   responseTime;
 
-  constructor(name, burstTime, time, priority) {
+  constructor(name, burstTime, time, priority, size) {
     this.id = nextProcessId++;
     this.name = name;
     this.burstTime = burstTime;
-    this.time = time; // This can be considered as arrival_time
+    this.time = time;
     this.priority = priority;
+    this.size = size;
     this.color = getRandomColor();
-    this.waitingTime = 0; // This can be considered as waiting_time
+    this.waitingTime = 0;
 
-    // Initialize the new fields
     this.arrivalTime = this.time;
     this.startTime = 0;
     this.completionTime = 0;
-    this.turnaroundTime = 0; // completion_time - arrival_time
-    this.responseTime = 0; // start_time - arrival_time
+    this.turnaroundTime = 0;
+    this.responseTime = 0;
   }
+  runProcess(callback) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        callback();
+        resolve();
+      }, this.size * 1000);
+    });
+  }
+
 }
+
 

@@ -1,12 +1,21 @@
 import {useState} from 'react';
 import ProcessAdder from "./ProcessAdder.jsx";
+import {Paginacion} from "../algoritmo/paginacion.js";
 
 
-const Fcfs = () => {
+const Pagination = () => {
   const [enabled, setEnabled] = useState(false);
-  const [processes, setProcesses] = useState([]);
+  const [processes, setProcesses] = useState([])
+
 
   const handleEnable = () => {
+    const cloneProcesos = [...processes];
+    const paginacion = new Paginacion(cloneProcesos, 100);
+
+    processes.forEach(process => {
+      paginacion.addProcessToMemory(process);
+    });
+
     setEnabled(prevState => !prevState);
   };
 
@@ -24,8 +33,8 @@ const Fcfs = () => {
             <table className="process-table">
               <thead>
               <tr>
-                <th>PROCESO</th>
-                <th>TAMANO</th>
+                <th>Proceso</th>
+                <th>Tamaño</th>
               </tr>
               </thead>
               <tbody>
@@ -35,7 +44,7 @@ const Fcfs = () => {
                   style={{ backgroundColor: process.color }}
                 >
                   <td>{process.name}</td>
-                  <td>{process.burstTime}</td>
+                  <td>{process.size}</td>
                 </tr>
               ))}
               </tbody>
@@ -64,4 +73,4 @@ const Fcfs = () => {
   );
 };
 
-export default Fcfs;
+export default Pagination;
