@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import ProcessAdder from "./ProcessAdder.jsx";
 import {Paginacion} from "../algoritmo/paginacion.js";
 
@@ -6,16 +6,19 @@ import {Paginacion} from "../algoritmo/paginacion.js";
 const Pagination = () => {
   const [enabled, setEnabled] = useState(false);
   const [processes, setProcesses] = useState([])
+  const [frames, setFrames] = useState(new Array(10).fill(null));
+  const [waitingQueue, setWaitingQueue] = useState([]);
 
+  useEffect(() => {
+    if (enabled) {
+      const paginacion = new Paginacion(processes, 10, setFrames, setWaitingQueue);
 
+      processes.forEach(async process => {
+        await paginacion.addProcessToMemory(process);
+      });
+    }
+  }, [enabled, processes]);
   const handleEnable = () => {
-    const cloneProcesos = [...processes];
-    const paginacion = new Paginacion(cloneProcesos, 100);
-
-    processes.forEach(process => {
-      paginacion.addProcessToMemory(process);
-    });
-
     setEnabled(prevState => !prevState);
   };
 
@@ -51,6 +54,47 @@ const Pagination = () => {
             </table>
           </div>
         ) : null}
+
+        <div>
+          <h2>Frames</h2>
+          <table className="frames-table">
+            <thead>
+            <tr>
+              <th>Frame</th>
+              <th>Process ID</th>
+            </tr>
+            </thead>
+            <tbody>
+            {frames.map((frame, index) => (
+              <tr key={index}>
+                <td>{index}</td>
+                <td>{frame ? frame.processId : 'Empty'}</td>
+              </tr>
+            ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <h2>Waiting Queue</h2>
+          <table className="waiting-queue-table">
+            <thead>
+            <tr>
+              <th>Position</th>
+              <th>Process ID</th>
+            </tr>
+            </thead>
+            <tbody>
+            {waitingQueue.map((process, index) => (
+              <tr key={index}>
+                <td>{index}</td>
+                <td>{process.id}</td>
+              </tr>
+            ))}
+            </tbody>
+          </table>
+        </div>
+
 
 
       </div>

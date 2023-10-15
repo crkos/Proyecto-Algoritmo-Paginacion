@@ -1,60 +1,81 @@
 export class Paginacion {
   procesos = [];
-  queue = [];
-  memoria = [];
   memoriaSize = 0;
   waitingProcesses = []; // Lista de procesos en espera
+  frames = new Array(10).fill(null); // Memoria en los frames
 
-  frames = new Array(10).fill(null); // Represent the frames in the memory
-  pageTable = new Map(); // Keep track of which pages of each process are in which frames
-
-  constructor(procesos, memoriaSize) {
+  constructor(procesos, memoriaSize, setFrames, setWaitingQueue) {
     this.procesos = procesos;
     this.memoriaSize = memoriaSize;
+    this.setFrames = setFrames;
+    this.setWaitingQueue = setWaitingQueue;
   }
 
-  async addProcessToMemory(process) {
-    const numberOfPages = Math.ceil(process.size / this.memoriaSize);
+  updateFrames(newFrames) {
+    this.frames = [...newFrames];
+    this.setFrames(this.frames);
+  }
 
-    for (let i = 0; i < numberOfPages; i++) {
+  updateWaitingQueue(newWaitingQueue) {
+    this.waitingProcesses = [...newWaitingQueue];
+    this.setWaitingQueue(this.waitingProcesses);
+  }
+
+
+  async addProcessToMemory(process) {
+    const numberOfFramesRequired = process.size;
+    const emptyFrames = this.frames.filter(frame => frame === null).length;
+    console.log(`Adding process ${process.id} to memory. Frames required: ${numberOfFramesRequired}`);
+
+    if (numberOfFramesRequired > emptyFrames) {
+      this.addProcessToWaitingQueue(process);
+      return;
+    }
+
+    for (let i = 0; i < numberOfFramesRequired; i++) {
       const frameIndex = this.frames.findIndex(frame => frame === null);
-      console.log(frameIndex);
 
       if (frameIndex === -1) {
         this.addProcessToWaitingQueue(process);
         return;
       }
 
-      this.frames[frameIndex] = { processId: process.id, pageIndex: i };
-      console.log(this.frames)
-      this.pageTable.set(`${process.id}-${i}`, frameIndex);
-      console.log(this.pageTable)
+      this.frames[frameIndex] = { processId: process.id, frameIndex: i };
+      console.log(`Assigned process ${process.id} to frame ${frameIndex}`);
     }
-
+    this.updateFrames(this.frames);
+    console.log(`Current frames: ${JSON.stringify(this.frames)}`);
     await process.runProcess(() => this.terminateProcess(process));
+    this.setFrames(this.frames);
   }
+
   addProcessToWaitingQueue(process) {
     this.waitingProcesses.push(process);
-    console.log("Waiting process: " + this.waitingProcesses);
+    this.updateWaitingQueue(this.waitingProcesses)
+    console.log(`Process ${process.id} added to waiting queue.`);
   }
 
-  terminateProcess(process) {
-    const numberOfPages = Math.ceil(process.size / this.memoriaSize);
+  async terminateProcess(process) {
+    const numberOfFramesOccupied = process.size;
+    console.log(`Terminating process ${process.id}. Frames to free: ${numberOfFramesOccupied}`);
 
-    for (let i = 0; i < numberOfPages; i++) {
-      const frameIndex = this.pageTable.get(`${process.id}-${i}`);
-      console.log(frameIndex);
+    for (let i = 0; i < numberOfFramesOccupied; i++) {
+      const frameIndex = this.frames.findIndex(frame => frame && frame.processId === process.id);
 
-      if (frameIndex !== undefined) {
+      if (frameIndex !== -1) {
         this.frames[frameIndex] = null;
-        this.pageTable.delete(`${process.id}-${i}`);
+        console.log(`Freed frame ${frameIndex}`);
       }
     }
 
+    console.log(`Current frames: ${JSON.stringify(this.frames)}`);
+    this.updateFrames(this.frames);
     if (this.waitingProcesses.length > 0) {
       const nextProcess = this.waitingProcesses.shift();
-      this.addProcessToMemory(nextProcess);
+      await this.addProcessToMemory(nextProcess);
+      this.updateWaitingQueue(this.waitingProcesses);
     }
   }
-
 }
+
+
