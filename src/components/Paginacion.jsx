@@ -44,10 +44,10 @@ const Pagination = () => {
               {processes.map((process) => (
                 <tr
                   key={process.name}
-                  style={{ backgroundColor: process.color }}
+                  style={{ backgroundColor: process.color}}
                 >
                   <td>{process.name}</td>
-                  <td>{process.burstTime}</td>
+                  <td>{process.size}</td>
                 </tr>
               ))}
               </tbody>
@@ -68,7 +68,7 @@ const Pagination = () => {
             {frames.map((frame, index) => (
               <tr key={index}>
                 <td>{index}</td>
-                <td>{frame ? frame.processName : ' '}</td>
+                <td>{frame ? frame.processName : 'Empty'}</td>
               </tr>
             ))}
             </tbody>
@@ -80,7 +80,7 @@ const Pagination = () => {
           <table className="waiting-queue-table">
             <thead>
             <tr>
-              <th>Position</th>
+              <th>Posición</th>
               <th>Nombre del proceso</th>
             </tr>
             </thead>

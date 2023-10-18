@@ -23,9 +23,9 @@ export class Paginacion {
 
 
   async addProcessToMemory(process) {
-    const numberOfFramesRequired = process.burstTime;
+    const numberOfFramesRequired = process.size;
     const emptyFrames = this.frames.filter(frame => frame === null).length;
-    console.log(`Adding process ${process.id} to memory. Frames required: ${numberOfFramesRequired}`);
+    console.log(`Adding process ${process.name} to memory. Frames required: ${numberOfFramesRequired}`);
 
     if (numberOfFramesRequired > emptyFrames) {
       this.addProcessToWaitingQueue(process);
@@ -41,7 +41,7 @@ export class Paginacion {
       }
 
       this.frames[frameIndex] = { processName: process.name, frameIndex: i };
-      console.log(`Assigned process ${process.id} to frame ${frameIndex}`);
+      console.log(`Assigned process ${process.name} to frame ${frameIndex}`);
     }
     this.updateFrames(this.frames);
     console.log(`Current frames: ${JSON.stringify(this.frames)}`);
@@ -52,12 +52,12 @@ export class Paginacion {
   addProcessToWaitingQueue(process) {
     this.waitingProcesses.push(process);
     this.updateWaitingQueue(this.waitingProcesses)
-    console.log(`Process ${process.id} added to waiting queue.`);
+    console.log(`Process ${process.name} added to waiting queue.`);
   }
 
   async terminateProcess(process) {
     const numberOfFramesOccupied = process.size;
-    console.log(`Terminating process ${process.id}. Frames to free: ${numberOfFramesOccupied}`);
+    console.log(`Terminating process ${process.name}. Frames to free: ${numberOfFramesOccupied}`);
 
     for (let i = 0; i < numberOfFramesOccupied; i++) {
       const frameIndex = this.frames.findIndex(frame => frame && frame.processName === process.name);

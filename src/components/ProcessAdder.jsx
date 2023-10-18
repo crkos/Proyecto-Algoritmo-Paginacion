@@ -27,7 +27,7 @@ const ProcessAdder = ({setProcesses}) => {
     if (!validation) {
       return;
     }
-    setProcesses((processes) => [...processes, new Process(process.name, Number(process.burstTime), Number(process.time), Number(process.priority), Number(process.size))]);
+    setProcesses((processes) => [...processes, new Process(process.name, Number(process.burstTime), Number(process.time), Number(process.priority))]);
     setProcess({
       name: "",
       burstTime: 0,
@@ -43,7 +43,7 @@ const ProcessAdder = ({setProcesses}) => {
       alert("El nombre del proceso no puede estar vacío");
       return false;
     }
-    if (process.burstTime < 0) {
+    if (process.size < 0) {
       alert("El tiempo de ráfaga no puede ser negativo");
       return false;
     }
