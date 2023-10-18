@@ -6,12 +6,12 @@ import {Paginacion} from "../algoritmo/paginacion.js";
 const Pagination = () => {
   const [enabled, setEnabled] = useState(false);
   const [processes, setProcesses] = useState([])
-  const [frames, setFrames] = useState(new Array(10).fill(null));
+  const [frames, setFrames] = useState(new Array(16).fill(null));
   const [waitingQueue, setWaitingQueue] = useState([]);
 
   useEffect(() => {
     if (enabled) {
-      const paginacion = new Paginacion(processes, 10, setFrames, setWaitingQueue);
+      const paginacion = new Paginacion(processes, 16, setFrames, setWaitingQueue);
 
       processes.forEach(async process => {
         await paginacion.addProcessToMemory(process);
@@ -43,11 +43,11 @@ const Pagination = () => {
               <tbody>
               {processes.map((process) => (
                 <tr
-                  key={process.id}
+                  key={process.name}
                   style={{ backgroundColor: process.color }}
                 >
                   <td>{process.name}</td>
-                  <td>{process.size}</td>
+                  <td>{process.burstTime}</td>
                 </tr>
               ))}
               </tbody>
@@ -56,19 +56,19 @@ const Pagination = () => {
         ) : null}
 
         <div>
-          <h2>Frames</h2>
+          <h2>Página</h2>
           <table className="frames-table">
             <thead>
             <tr>
-              <th>Frame</th>
-              <th>Process ID</th>
+              <th>Marco</th>
+              <th>Proceso</th>
             </tr>
             </thead>
             <tbody>
             {frames.map((frame, index) => (
               <tr key={index}>
                 <td>{index}</td>
-                <td>{frame ? frame.processId : 'Empty'}</td>
+                <td>{frame ? frame.processName : ' '}</td>
               </tr>
             ))}
             </tbody>
@@ -76,19 +76,19 @@ const Pagination = () => {
         </div>
 
         <div>
-          <h2>Waiting Queue</h2>
+          <h2>Procesos en espera</h2>
           <table className="waiting-queue-table">
             <thead>
             <tr>
               <th>Position</th>
-              <th>Process ID</th>
+              <th>Nombre del proceso</th>
             </tr>
             </thead>
             <tbody>
             {waitingQueue.map((process, index) => (
               <tr key={index}>
                 <td>{index}</td>
-                <td>{process.id}</td>
+                <td>{process.name}</td>
               </tr>
             ))}
             </tbody>

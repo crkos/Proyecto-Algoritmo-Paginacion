@@ -13,11 +13,13 @@ const ProcessAdder = ({setProcesses}) => {
   });
 
   const addPrueba = () => {
-    setProcesses((processes) => [...processes, new Process("A", 25, 0, 2, 5)]);
-    setProcesses((processes) => [...processes, new Process("B", 10, 4, 1, 10)]);
-    setProcesses((processes) => [...processes, new Process("C", 10, 3, 1, 6)]);
-    setProcesses((processes) => [...processes, new Process("D", 4, 2, 2,3)]);
-    setProcesses((processes) => [...processes, new Process("E", 4, 1, 3, 7)]);
+    setProcesses((processes) => [...processes, new Process("A", 6, 0, 2)]);
+    setProcesses((processes) => [...processes, new Process("B", 10, 4, 1)]);
+    setProcesses((processes) => [...processes, new Process("C", 10, 3, 1)]);
+    setProcesses((processes) => [...processes, new Process("D", 4, 2, 2)]);
+    setProcesses((processes) => [...processes, new Process("E", 4, 1, 3)]);
+    setProcesses((processes) => [...processes, new Process("F", 3, 5, 2)]);
+    setProcesses((processes) => [...processes, new Process("G", 2, 6, 3)]);
   }
 
   const addProcess = () => {

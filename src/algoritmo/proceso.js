@@ -24,13 +24,13 @@ export class Process {
   turnaroundTime;
   responseTime;
 
-  constructor(name, burstTime, time, priority, size) {
+  constructor(name, burstTime, time, priority) {
     this.id = nextProcessId++;
     this.name = name;
     this.burstTime = burstTime;
     this.time = time;
     this.priority = priority;
-    this.size = size;
+    this.size = burstTime;
     this.color = getRandomColor();
     this.waitingTime = 0;
 
