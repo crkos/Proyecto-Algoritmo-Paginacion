@@ -2,7 +2,7 @@ export class Paginacion {
   procesos = [];
   memoriaSize = 0;
   waitingProcesses = []; // Lista de procesos en espera
-  frames = new Array(16).fill(null); // Memoria en los frames
+  frames = new Array(10).fill(null); // Memoria en los frames
 
   constructor(procesos, memoriaSize, setFrames, setWaitingQueue) {
     this.procesos = procesos;
@@ -40,7 +40,7 @@ export class Paginacion {
         return;
       }
 
-      this.frames[frameIndex] = { processName: process.name, frameIndex: i };
+      this.frames[frameIndex] = { processName: process.name, frameIndex: i, backgroundColor: process.color };
       console.log(`Assigned process ${process.name} to frame ${frameIndex}`);
     }
     this.updateFrames(this.frames);
@@ -70,10 +70,16 @@ export class Paginacion {
 
     console.log(`Current frames: ${JSON.stringify(this.frames)}`);
     this.updateFrames(this.frames);
-    if (this.waitingProcesses.length > 0) {
+
+// Add all processes in the waiting queue to memory, if there is enough space.
+    let freeFrames = this.frames.filter(frame => frame === null).length;
+    let processesAdded = 0;
+    while (this.waitingProcesses.length > 0 && freeFrames >= this.waitingProcesses[0].size && processesAdded < 2) {
       const nextProcess = this.waitingProcesses.shift();
       await this.addProcessToMemory(nextProcess);
       this.updateWaitingQueue(this.waitingProcesses);
+      freeFrames -= nextProcess.size;
+      processesAdded++;
     }
   }
 }

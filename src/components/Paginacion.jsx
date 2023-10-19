@@ -6,7 +6,7 @@ import {Paginacion} from "../algoritmo/paginacion.js";
 const Pagination = () => {
   const [enabled, setEnabled] = useState(false);
   const [processes, setProcesses] = useState([])
-  const [frames, setFrames] = useState(new Array(16).fill(null));
+  const [frames, setFrames] = useState(new Array(10).fill(null));
   const [waitingQueue, setWaitingQueue] = useState([]);
 
   useEffect(() => {
@@ -65,8 +65,8 @@ const Pagination = () => {
             </tr>
             </thead>
             <tbody>
-            {frames.map((frame, index) => (
-              <tr key={index}>
+            {frames?.map((frame, index) => (
+              <tr key={index} style={{backgroundColor: frame?.backgroundColor}}>
                 <td>{index}</td>
                 <td>{frame ? frame.processName : 'Empty'}</td>
               </tr>
