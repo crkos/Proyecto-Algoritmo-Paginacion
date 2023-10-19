@@ -13,9 +13,15 @@ const Pagination = () => {
     if (enabled) {
       const paginacion = new Paginacion(processes, 16, setFrames, setWaitingQueue);
 
+      setInterval(async () => {
+        await paginacion.checkFreeSpace();
+      }, 1000); // 1 second
+
       processes.forEach(async process => {
         await paginacion.addProcessToMemory(process);
       });
+
+
     }
   }, [enabled, processes]);
   const handleEnable = () => {

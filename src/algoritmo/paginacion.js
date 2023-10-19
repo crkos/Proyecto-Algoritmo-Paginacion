@@ -11,6 +11,15 @@ export class Paginacion {
     this.setWaitingQueue = setWaitingQueue;
   }
 
+  async checkFreeSpace() {
+    const freeFrames = this.frames.filter(frame => frame === null).length;
+    if (freeFrames > 0 && this.waitingProcesses.length > 0) {
+      const nextProcess = this.waitingProcesses.shift();
+      await this.addProcessToMemory(nextProcess);
+      this.updateWaitingQueue(this.waitingProcesses);
+    }
+  }
+
   updateFrames(newFrames) {
     this.frames = [...newFrames];
     this.setFrames(this.frames);
